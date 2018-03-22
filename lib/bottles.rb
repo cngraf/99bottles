@@ -77,8 +77,8 @@ HEREDOC
     BottleVerse.new(n).full_verse
   end
 
-  def verses(*nums)
-    nums.map do |n|
+  def verses(start_num, end_num)
+    start_num.downto(end_num).map do |n|
       BottleVerse.new(n).full_verse
     end.join("\n")
   end

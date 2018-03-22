@@ -37,29 +37,43 @@ class Bottles
       PRONOUNS[@state] || PRONOUNS[:default] || @num
     end
 
+    def next_verse
+      if @state == :nullular
+        BottleVerse.new(99)
+      else
+        BottleVerse.new(@num - 1)
+      end
+    end
+
     def number_of_bottles
       "#{count_word_form} #{bottle_form}"
     end
 
     def wall_phrase
-      "#{number_of_bottles} of beer on the wall, #{number_of_bottles} of beer."
+      "#{number_of_bottles.capitalize} of beer on the wall, #{number_of_bottles} of beer."
     end
 
     def pass_phrase
-      "Take #{pronoun_form} down and pass it around,"
+      if @state == :nullular
+        "Go to the store and buy some more,"
+      else
+        "Take #{pronoun_form} down and pass it around,"
+      end
     end
 
     def leading_phrase
       "#{number_of_bottles} of beer on the wall."
     end
+
+    def full_verse
+<<-HEREDOC
+#{wall_phrase}
+#{pass_phrase} #{next_verse.leading_phrase}
+HEREDOC
+    end
   end
 
   def verse(n)
-this_verse = BottleVerse.new(n)
-next_verse = BottleVerse.new(n-1)
-<<-HEREDOC
-#{this_verse.wall_phrase}
-#{this_verse.pass_phrase} #{next_verse.leading_phrase}
-HEREDOC
+    BottleVerse.new(n).full_verse
   end
 end

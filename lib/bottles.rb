@@ -4,10 +4,19 @@ class Bottles
   end
 
   def get_verse(n)
+this_phrase = bottle_phrase(n)
+next_phrase = bottle_phrase(n-1)
     <<-VERSE
-#{n} #{bottle_form(n)} of beer on the wall, #{n} #{bottle_form(n)} of beer.
-Take one down and pass it around, #{n-1} #{bottle_form(n-1)} of beer on the wall.
+#{this_phrase} of beer on the wall, #{this_phrase} of beer.
+Take one down and pass it around, #{next_phrase} of beer on the wall.
     VERSE
+  end
+
+  def bottle_phrase(n)
+    count = count_form(n)
+    noun = bottle_form(n)
+
+    "#{count} #{noun}"
   end
 
   def bottle_form(n)
@@ -15,6 +24,14 @@ Take one down and pass it around, #{n-1} #{bottle_form(n-1)} of beer on the wall
       "bottle"
     else
       "bottles"
+    end
+  end
+
+  def count_form(n)
+    if n == 0
+      "no more"
+    else
+      n.to_s
     end
   end
 end

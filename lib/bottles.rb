@@ -4,41 +4,40 @@ class Bottles
   class BottleVerse
     SPECIAL_STATES = [:nullular, :singular, :plural]
 
-    NOUNS = {
-      singular: "bottle",
-      default: "bottles",
-    }
-
-    PRONOUNS = {
-      singular: "it",
-      default: "one",
-    }
-
-    COUNT_WORDS = {
-      nullular: "no more",
-      default: nil,
-      # hmmm
-    }
-
     def initialize(n)
       @num = n
-      @state = SPECIAL_STATES[n] || SPECIAL_STATES.last
     end
 
     def bottle_form
-      NOUNS[@state] || NOUNS[:default] || @num
+      case @num
+      when 1
+        "bottle"
+      else
+        "bottles"
+      end
     end
 
     def count_word_form
-      COUNT_WORDS[@state] || COUNT_WORDS[:default] || @num
+      case @num
+      when 0
+        "no more"
+      else
+        @num
+      end
     end
 
     def pronoun_form
-      PRONOUNS[@state] || PRONOUNS[:default] || @num
+      case @num
+      when 1
+        "it"
+      else
+        "one"
+      end
     end
 
     def next_verse
-      if @state == :nullular
+      case @num
+      when 0
         BottleVerse.new(99)
       else
         BottleVerse.new(@num - 1)
@@ -54,7 +53,8 @@ class Bottles
     end
 
     def pass_phrase
-      if @state == :nullular
+      case @num
+      when 0
         "Go to the store and buy some more,"
       else
         "Take #{pronoun_form} down and pass it around,"

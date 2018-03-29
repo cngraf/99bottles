@@ -5,26 +5,28 @@ class Bottles
   class Wall
     def initialize(number_of_bottles)
       @number_of_bottles = number_of_bottles
+      @last_action = nil
     end
 
-    def sing_a_verse!
+    def sing_a_round!
       first_count = count_the_bottles_of_beer
-
-      action_peformed = nil
-      if @number_of_bottles > 0
-        action_peformed = "take #{_pronoun} down and pass it around"
-        @number_of_bottles -= 1
-      else
-        action_peformed = "go to the store and buy some more"
-        @number_of_bottles = 99
-      end
-
+      peform_the_action!
       recount = count_the_bottles_of_beer
 
-      <<~FULLROUND
+      <<~ROUND
         #{first_count.capitalize} on the wall, #{first_count}.
-        #{action_peformed.capitalize}, #{recount} on the wall.
-      FULLROUND
+        #{@last_action.capitalize}, #{recount} on the wall.
+      ROUND
+    end
+
+    def peform_the_action!
+      if @number_of_bottles > 0
+        @last_action = "take #{_pronoun} down and pass it around"
+        @number_of_bottles -= 1
+      else
+        @last_action = "go to the store and buy some more"
+        @number_of_bottles = 99
+      end
     end
 
     def count_the_bottles_of_beer
@@ -62,7 +64,7 @@ class Bottles
   end
 
   def verse(n)
-    Wall.new(n).sing_a_verse!
+    Wall.new(n).sing_a_round!
   end
 
   def verses(start_num, end_num)
@@ -70,7 +72,7 @@ class Bottles
     wall = Wall.new(start_num)
 
     (start_num - end_num + 1).times do
-      song << wall.sing_a_verse!
+      song << wall.sing_a_round!
     end
     song.join("\n")
   end

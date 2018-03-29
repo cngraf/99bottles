@@ -2,8 +2,6 @@ require 'pry'
 
 class Bottles
   class BottleVerse
-    SPECIAL_STATES = [:nullular, :singular, :plural]
-
     def initialize(n)
       @num = n
     end
@@ -36,23 +34,18 @@ class Bottles
     end
 
     def next_verse
-      case @num
-      when 0
-        BottleVerse.new(99)
-      else
-        BottleVerse.new(@num - 1)
-      end
+      BottleVerse.new((@num - 1) % 100)
     end
 
     def number_of_bottles
       "#{count_word_form} #{bottle_form}"
     end
 
-    def wall_phrase
+    def first_line
       "#{number_of_bottles.capitalize} of beer on the wall, #{number_of_bottles} of beer."
     end
 
-    def pass_phrase
+    def second_line_start
       case @num
       when 0
         "Go to the store and buy some more,"
@@ -61,15 +54,15 @@ class Bottles
       end
     end
 
-    def leading_phrase
-      "#{number_of_bottles} of beer on the wall."
+    def second_line_end
+      "#{next_verse.number_of_bottles} of beer on the wall."
     end
 
     def full_verse
-<<-HEREDOC
-#{wall_phrase}
-#{pass_phrase} #{next_verse.leading_phrase}
-HEREDOC
+      <<~HEREDOC
+      #{first_line}
+      #{second_line_start} #{second_line_end}
+      HEREDOC
     end
   end
 

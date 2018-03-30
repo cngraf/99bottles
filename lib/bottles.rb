@@ -2,35 +2,35 @@ class Bottles
   class Wall
     def initialize(n)
       @bottles_at_large = n
+      @briefing = nil
+      @debriefing = nil
     end
 
     def conduct_operations!
-      <<~ROUND
-        #{debriefing}
-        #{execute_directive!}, #{postmortem}
-      ROUND
+      @briefing = "#{sitrep.capitalize} on the wall, #{sitrep}."
+      execute_and_debrief!
     end
 
-    def debriefing
-      "#{sitrep.capitalize} on the wall, #{sitrep}."
+    def mission_log
+      <<~LOG
+      #{@briefing}
+      #{@debriefing}
+      LOG
     end
 
-    def postmortem
-      "#{sitrep} on the wall."
-    end
-
-    def execute_directive!
+    def execute_and_debrief!
       case @bottles_at_large
       when 0
+        @debriefing = "Go to the store and buy some more, "
         @bottles_at_large = 99
-        "Go to the store and buy some more"
       when 1
+        @debriefing = "Take it down and pass it around, "
         @bottles_at_large -= 1
-        "Take it down and pass it around"
       else
+        @debriefing = "Take one down and pass it around, "
         @bottles_at_large -= 1
-        "Take one down and pass it around"
       end
+      @debriefing << "#{sitrep} on the wall."
     end
 
     def sitrep
@@ -46,7 +46,9 @@ class Bottles
   end
 
   def verse(n)
-    Wall.new(n).conduct_operations!
+    wall = Wall.new(n)
+    wall.conduct_operations!
+    wall.mission_log
   end
 
   def verses(start_num, end_num)
@@ -54,7 +56,8 @@ class Bottles
     wall = Wall.new(start_num)
 
     (start_num - end_num + 1).times do
-      song << wall.conduct_operations!
+      wall.conduct_operations!
+      song << wall.mission_log
     end
     song.join("\n")
   end

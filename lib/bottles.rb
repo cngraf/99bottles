@@ -1,70 +1,52 @@
-require 'pry'
-require 'pry'
-
 class Bottles
   class Wall
-    def initialize(number_of_bottles)
-      @number_of_bottles = number_of_bottles
-      @last_action = nil
+    def initialize(n)
+      @bottles_at_large = n
     end
 
-    def sing_a_round!
-      first_count = count_the_bottles_of_beer
-      peform_the_action!
-      recount = count_the_bottles_of_beer
-
+    def conduct_operations!
       <<~ROUND
-        #{first_count.capitalize} on the wall, #{first_count}.
-        #{@last_action.capitalize}, #{recount} on the wall.
+        #{debriefing}
+        #{execute_directive!}, #{postmortem}
       ROUND
     end
 
-    def peform_the_action!
-      if @number_of_bottles > 0
-        @last_action = "take #{_pronoun} down and pass it around"
-        @number_of_bottles -= 1
-      else
-        @last_action = "go to the store and buy some more"
-        @number_of_bottles = 99
-      end
+    def debriefing
+      "#{sitrep.capitalize} on the wall, #{sitrep}."
     end
 
-    def count_the_bottles_of_beer
-      "#{_number} #{_noun} of beer"
+    def postmortem
+      "#{sitrep} on the wall."
     end
 
-    private
-
-    def _noun
-      case @number_of_bottles
-      when 1
-        "bottle"
-      else
-        "bottles"
-      end
-    end
-
-    def _number
-      case @number_of_bottles
+    def execute_directive!
+      case @bottles_at_large
       when 0
-        "no more"
+        @bottles_at_large = 99
+        "Go to the store and buy some more"
+      when 1
+        @bottles_at_large -= 1
+        "Take it down and pass it around"
       else
-        @number_of_bottles
+        @bottles_at_large -= 1
+        "Take one down and pass it around"
       end
     end
 
-    def _pronoun
-      case @number_of_bottles
+    def sitrep
+      case @bottles_at_large
+      when 0
+        "no more bottles of beer"
       when 1
-        "it"
+        "1 bottle of beer"
       else
-        "one"
+        "#{@bottles_at_large} bottles of beer"
       end
     end
   end
 
   def verse(n)
-    Wall.new(n).sing_a_round!
+    Wall.new(n).conduct_operations!
   end
 
   def verses(start_num, end_num)
@@ -72,7 +54,7 @@ class Bottles
     wall = Wall.new(start_num)
 
     (start_num - end_num + 1).times do
-      song << wall.sing_a_round!
+      song << wall.conduct_operations!
     end
     song.join("\n")
   end

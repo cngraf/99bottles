@@ -1,36 +1,35 @@
 class Bottles
   class Wall
+    attr_reader :mission_logs
+
     def initialize(n)
       @bottles_at_large = n
-      @briefing = nil
-      @debriefing = nil
+      @mission_logs = []
     end
 
     def conduct_operations!
-      @briefing = "#{sitrep.capitalize} on the wall, #{sitrep}."
-      execute_and_debrief!
+      latest_briefing = sitrep
+      latest_directive = obtain_directive
+      @bottles_at_large = (@bottles_at_large - 1) % 100
+      latest_debriefing = sitrep
+
+      @mission_logs << <<~REPORT
+        #{latest_briefing.capitalize} on the wall, #{latest_briefing}.
+        #{latest_directive}, #{latest_debriefing} on the wall.
+      REPORT
+
+      self
     end
 
-    def mission_log
-      <<~LOG
-      #{@briefing}
-      #{@debriefing}
-      LOG
-    end
-
-    def execute_and_debrief!
+    def obtain_directive
       case @bottles_at_large
       when 0
-        @debriefing = "Go to the store and buy some more, "
-        @bottles_at_large = 99
+        "Go to the store and buy some more"
       when 1
-        @debriefing = "Take it down and pass it around, "
-        @bottles_at_large -= 1
+        "Take it down and pass it around"
       else
-        @debriefing = "Take one down and pass it around, "
-        @bottles_at_large -= 1
+        "Take one down and pass it around"
       end
-      @debriefing << "#{sitrep} on the wall."
     end
 
     def sitrep
@@ -46,20 +45,15 @@ class Bottles
   end
 
   def verse(n)
-    wall = Wall.new(n)
-    wall.conduct_operations!
-    wall.mission_log
+    Wall.new(n).conduct_operations!.mission_logs.last
   end
 
   def verses(start_num, end_num)
-    song = []
     wall = Wall.new(start_num)
-
     (start_num - end_num + 1).times do
       wall.conduct_operations!
-      song << wall.mission_log
     end
-    song.join("\n")
+    wall.mission_logs.join("\n")
   end
 
   def song
